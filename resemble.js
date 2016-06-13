@@ -59,7 +59,7 @@ var _this = {};
 
 		var ignoreAntialiasing = false;
 		var ignoreColors = false;
-    var ignoreRectangles = null;
+    		var ignoreRectangles = null;
 
 		function triggerDataUpdate(){
 			var len = updateCallbackArray.length;
@@ -113,18 +113,18 @@ var _this = {};
 		}
 
 		function loadImageData( fileData, callback ){
-      var png = new PNG();
-      if (Buffer.isBuffer(fileData)) {
-        png.parse(fileData, function (err, data) {
-          callback(data, data.width, data.height);
-        });
-      } else {
-        fs.createReadStream(fileData)
-          .pipe(png)
-          .on('parsed', function() {
-            callback(this, this.width, this.height);
-          });
-      };
+      			var png = new PNG();
+      			if (Buffer.isBuffer(fileData)) {
+        			png.parse(fileData, function (err, data) {
+          				callback(data, data.width, data.height);
+        			});
+      			} else {
+        			fs.createReadStream(fileData)
+          			  .pipe(png)
+          			  .on('parsed', function() {
+            				callback(this, this.width, this.height);
+          			});
+      			};
 		}
 
 		function isColorSimilar(a, b, color){
@@ -506,7 +506,7 @@ var _this = {};
 					if(hasMethod) { param(); }
 					return self;
 				},
-        //array of rectangles, each rectangle is defined as (x, y, width. height)
+        //array of rectangles, each rectangle is defined as (x, y, width, height)
         //e.g. [[325, 170, 100, 40]]
         ignoreRectangles: function(rectangles) {
           ignoreRectangles = rectangles;
