@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/lksv/node-resemble.js",
   "dependencies": {
-    "pngjs": "~2.2.0",
+    "pngjs": "kirkstrobeck/node-pngjs#07bd6d83d25494ae5c24bb7b678220ab9372d00e",
     "jpeg-js": "0.2.0"
   },
   "devDependencies": {
