@@ -7,6 +7,7 @@ URL: https://github.com/Huddle/Resemble.js
 var PNG = require('pngjs').PNG;
 var fs = require('fs');
 var jpeg = require('jpeg-js');
+var readimage = require("readimage");
 
 //keeping wrong indentation and '_this' for better diff with origin resemble.js
 var _this = {};
@@ -112,29 +113,25 @@ var _this = {};
 			triggerDataUpdate();
 		}
 
-		function loadImageData( fileData, callback ){
-
+		function loadImageData(fileData, callback ){
+			var data;
+			
 			if (Buffer.isBuffer(fileData)) {
-				var png = new PNG();
-				png.parse(fileData, function (err, data) {
-				  callback(data, data.width, data.height);
-				});
+				data = fileData;
+			} else if(fileData.indexOf && fileData.indexOf('data:image') === 0) {
+				data = Buffer.from(fileData.substring(fileData.indexOf(',')), 'base64');;			
 			} else {
-				var ext = fileData.substring(fileData.lastIndexOf(".")+1);
-				if(ext=="png") {
-					var png = new PNG();
-					fs.createReadStream(fileData)
-					  .pipe(png)
-					  .on('parsed', function() {
-						callback(this, this.width, this.height);
-					  });
+				data = fs.readFileSync(fileData);
+			}
+			
+			readimage(data, function (err, image) {
+				if (err) {
+					console.log("failed to parse the image");
+					console.log(err);
+				} else {
+					callback({data: image.frames[0].data, width: image.width, height: image.height}, image.width, image.height);
 				}
-				if(ext=="jpg" || ext=="jpeg") {
-					var jpegData = fs.readFileSync(fileData);
-					fileData = jpeg.decode(jpegData, true);
-					callback(fileData, fileData.width, fileData.height);
-				}
-			};
+			});
 		}
 
 		function isColorSimilar(a, b, color){
@@ -428,7 +425,7 @@ var _this = {};
 			data.analysisTime = Date.now() - time;
 
 			data.getDiffImage = function(text){
-        return imgd;
+				return imgd;
 			};
 
 			data.getDiffImageAsJPEG = function(quality) {
