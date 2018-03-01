@@ -493,12 +493,13 @@ var _this = {};
 
 			var self = {
 				setTolerance: function(threshold){
-					for(var key in threshold){
-						tolerance[key] = (+threshold[key] >= 0 && +threshold[key] <= 255) ? threshold[key] : tolerance[key];
+					if (typeof threshold === 'object') {
+						for(var key in threshold){
+							tolerance[key] = (+threshold[key] >= 0 && +threshold[key] <= 255) ? threshold[key] : tolerance[key];
+						}
+						ignoreAntialiasing = false;
+						ignoreColors = false;
 					}
-
-					ignoreAntialiasing = false;
-					ignoreColors = false;
 
 					if(hasMethod) { param(); }
 					return self;
