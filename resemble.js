@@ -60,6 +60,7 @@ var _this = {};
 		var ignoreAntialiasing = false;
 		var ignoreColors = false;
     var ignoreRectangles = null;
+    var includeRectangles = null;
 
 		function triggerDataUpdate(){
 			var len = updateCallbackArray.length;
@@ -156,6 +157,13 @@ var _this = {};
 				return false;
 			}
 		}
+
+    function isWithinRectangle(x, y, rectangle) {
+      return (x >= rectangle[1]) &&
+        (x < rectangle[1] + rectangle[3]) &&
+        (y >= rectangle[0]) &&
+        (y < rectangle[0] + rectangle[2])
+    }
 
 		function isNumber(n) {
 			return !isNaN(parseFloat(n));
@@ -383,17 +391,33 @@ var _this = {};
           for(rectagnlesIdx = 0; rectagnlesIdx < ignoreRectangles.length; rectagnlesIdx++) {
             currentRectangle = ignoreRectangles[rectagnlesIdx];
             //console.log(currentRectangle, verticalPos, horizontalPos);
-            if (
-              (verticalPos >= currentRectangle[1]) &&
-              (verticalPos < currentRectangle[1] + currentRectangle[3]) &&
-              (horizontalPos >= currentRectangle[0]) &&
-              (horizontalPos < currentRectangle[0] + currentRectangle[2])
-            ) {
+            if (isWithinRectangle(verticalPos, horizontalPos, currentRectangle)) {
 						  copyGrayScalePixel(targetPix, offset, pixel2);
 					    //copyPixel(targetPix, offset, pixel1, pixel2);
               return;
             }
           }
+        }
+
+        if (includeRectangles) {
+        	var isWithinAnyRectangle = false;
+          for(rectagnlesIdx = 0; rectagnlesIdx < includeRectangles.length; rectagnlesIdx++) {
+            currentRectangle = includeRectangles[rectagnlesIdx];
+            if (isWithinRectangle(verticalPos, horizontalPos, currentRectangle)) {
+            	isWithinAnyRectangle = true;
+            }
+          }
+          // Better solution but i'm not sure if you want to use reducers in your repo?
+          // var isWithinAnyRectangle = includeRectangles.reduce(function (acc, currentRectangle) {
+          // 	if(isWithinRectangle) {
+          // 		return true;
+					// 	}
+					// 	return acc;
+					// }, false);
+          if(!isWithinAnyRectangle) {
+            copyGrayScalePixel(targetPix, offset, pixel2);
+            return;
+					}
         }
 
 				if (ignoreColors){
@@ -538,6 +562,12 @@ var _this = {};
         //e.g. [[325, 170, 100, 40]]
         ignoreRectangles: function(rectangles) {
           ignoreRectangles = rectangles;
+          return self;
+        },
+        //array of rectangles, each rectangle is defined as (x, y, width. height)
+        //e.g. [[325, 170, 100, 40]]
+        includeRectangles: function(rectangles) {
+          includeRectangles = rectangles;
           return self;
         },
 				repaint: function(){

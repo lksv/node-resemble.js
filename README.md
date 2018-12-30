@@ -11,7 +11,7 @@ It is a modification of [Resemble.js](https://github.com/Huddle/Resemble.js)
 
 ### Example
 
-Retrieve basic analysis on image.
+##### Retrieve basic analysis on image.
 
 ```javascript
 var api = resemble(fileData).onComplete(function(data){
@@ -27,7 +27,7 @@ var api = resemble(fileData).onComplete(function(data){
 });
 ```
 
-Use resemble to compare two images.
+##### Use resemble to compare two images.
 
 ```javascript
 var diff = resemble(file).compareTo(file2).ignoreColors().onComplete(function(data){
@@ -43,7 +43,7 @@ var diff = resemble(file).compareTo(file2).ignoreColors().onComplete(function(da
 });
 ```
 
-You can also change the comparison method after the first analysis.
+##### You can also change the comparison method after the first analysis.
 
 ```javascript
 // diff.ignoreNothing();
@@ -51,7 +51,20 @@ You can also change the comparison method after the first analysis.
 diff.ignoreAntialiasing();
 ```
 
-And change the output display style.
+##### Specify matching Box for image comparsion
+
+```javascript
+diff.ignoreRectangles([[325,170,100,40], [10,10,200,200]]);
+```
+- Ignores matched rectangles
+- <[Array<Array[x, y, width, height]>]>
+```javascript
+diff.includeRectangles([[325,170,100,40], [10,10,200,200]]);
+```
+- Compares only within given rectangles
+- <[Array<Array[x, y, width, height]>]>
+
+##### Change the output display style.
 
 ```javascript
 resemble.outputSettings({
